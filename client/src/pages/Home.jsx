@@ -14,75 +14,190 @@ import fastandreliabledelivery from './images/fast and reliable delivery.png';
 import profile from './images/profile.png';
 import sample from './video/sample.mp4';
 
+console.log('🚀 Hero component loaded');
+console.log('📦 GSAP imported:', typeof gsap);
+console.log('📦 useGSAP imported:', typeof useGSAP);
+console.log('📦 ScrollTrigger imported:', typeof ScrollTrigger);
+
 gsap.registerPlugin(useGSAP);
 gsap.registerPlugin(ScrollTrigger);
+
+console.log('✅ GSAP plugins registered');
+
 const Hero = () => {
+    console.log('🔄 Hero component rendering');
+
     useGSAP(() => {
-        gsap.utils.toArray('.card').forEach((card) => {
-            gsap.to(card, {
+        console.log('🎯 useGSAP hook executed');
+        console.log('🔍 Searching for .card elements...');
+
+        const cards = gsap.utils.toArray('.card');
+        console.log('📋 Found cards:', cards.length);
+        console.log('📋 Cards elements:', cards);
+
+        if (cards.length === 0) {
+            console.warn('⚠️ No .card elements found in DOM');
+        }
+
+        cards.forEach((card, index) => {
+            console.log(`🎪 Setting up animation for card ${index}:`, card);
+
+            const animation = gsap.to(card, {
                 scale: 0.8,
                 opacity: 0,
                 scrollTrigger: {
                     trigger: card,
                     start: 'top 20%',
-                    bottom: 'top 20a%',
+                    end: 'bottom 20%', // Fixed typo from 'bottom 20a%'
                     scrub: true,
+                    onUpdate: (self) => {
+                        console.log(`📊 Card ${index} progress:`, self.progress);
+                    },
+                    onEnter: () => console.log(`➡️ Card ${index} entered`),
+                    onLeave: () => console.log(`⬅️ Card ${index} left`),
+                    onEnterBack: () => console.log(`🔄 Card ${index} entered back`),
+                    onLeaveBack: () => console.log(`🔄 Card ${index} left back`),
+                    markers: true // Add markers for debugging
                 }
-            })
-        })
-        gsap.to('.footer', {
-            backgroundColor: 'black',
-            color: 'white',
-            transition: 'all 0.5s',
-            scrollTrigger: {
-                trigger: '.footer',
-                start: 'top 10%',
-                end: 'top 10%',
-                scrub: true,
-            },
-        });
-        gsap.to('.navbar', {
-            backgroundColor: 'black',
-            color: 'white',
-            transition: 'all 0.5s',
-            scrollTrigger: {
-                trigger: '.footer',
-                start: 'top 10%',
-                end: 'top 10%',
-                scrub: true,
-            },
-        });
-    })
-    useEffect(() => {
-        const lenis = new Lenis();
-        function raf(time) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
-        requestAnimationFrame(raf);
-        const particles = document.querySelectorAll('.particle');
-
-        const handleMouseMove = (event) => {
-            const { clientX, clientY } = event;
-            particles.forEach((particle) => {
-                const rect = particle.getBoundingClientRect();
-                const dx = (clientX - rect.left - rect.width / 2) * 0.02;
-                const dy = (clientY - rect.top - rect.height / 2) * 0.02;
-                gsap.to(particle, {
-                    x: dx,
-                    y: dy,
-                    duration: 0.3,
-                    ease: 'power2.out',
-                });
             });
-        };
 
-        document.addEventListener('mousemove', handleMouseMove);
+            console.log(`✅ Animation created for card ${index}:`, animation);
+        });
 
-        return () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-        };
-    }, [])
+        console.log('🔍 Setting up footer animations...');
+
+        const footerElement = document.querySelector('.footer');
+        console.log('🦶 Footer element found:', !!footerElement, footerElement);
+
+        if (footerElement) {
+            const footerAnimation = gsap.to('.footer', {
+                backgroundColor: 'black',
+                color: 'white',
+                scrollTrigger: {
+                    trigger: '.footer',
+                    start: 'top 10%',
+                    end: 'top 10%',
+                    scrub: true,
+                    onUpdate: (self) => {
+                        console.log('🦶 Footer animation progress:', self.progress);
+                    },
+                    markers: true
+                },
+            });
+            console.log('✅ Footer animation created:', footerAnimation);
+        }
+
+        const navbarElement = document.querySelector('.navbar');
+        console.log('🧭 Navbar element found:', !!navbarElement, navbarElement);
+
+        if (navbarElement) {
+            const navbarAnimation = gsap.to('.navbar', {
+                backgroundColor: 'black',
+                color: 'white',
+                scrollTrigger: {
+                    trigger: '.footer',
+                    start: 'top 10%',
+                    end: 'top 10%',
+                    scrub: true,
+                    onUpdate: (self) => {
+                        console.log('🧭 Navbar animation progress:', self.progress);
+                    },
+                    markers: true
+                },
+            });
+            console.log('✅ Navbar animation created:', navbarAnimation);
+        }
+
+        console.log('🎉 All GSAP animations setup complete');
+
+        // Debug ScrollTrigger
+        console.log('🔧 ScrollTrigger instances:', ScrollTrigger.getAll());
+
+    }, []); // Empty dependency array
+
+    useEffect(() => {
+        console.log('🌟 useEffect for Lenis and particles started');
+
+        try {
+            const lenis = new Lenis();
+            console.log('✅ Lenis initialized:', lenis);
+
+            function raf(time) {
+                lenis.raf(time);
+                requestAnimationFrame(raf);
+            }
+            requestAnimationFrame(raf);
+
+            const particles = document.querySelectorAll('.particle');
+            console.log('✨ Particles found:', particles.length, particles);
+
+            const handleMouseMove = (event) => {
+                if (particles.length === 0) return;
+
+                const { clientX, clientY } = event;
+                particles.forEach((particle, index) => {
+                    const rect = particle.getBoundingClientRect();
+                    const dx = (clientX - rect.left - rect.width / 2) * 0.02;
+                    const dy = (clientY - rect.top - rect.height / 2) * 0.02;
+
+                    gsap.to(particle, {
+                        x: dx,
+                        y: dy,
+                        duration: 0.3,
+                        ease: 'power2.out',
+                        onComplete: () => {
+                            // Uncomment for detailed particle tracking
+                            // console.log(`✨ Particle ${index} moved to x: ${dx}, y: ${dy}`);
+                        }
+                    });
+                });
+            };
+
+            document.addEventListener('mousemove', handleMouseMove);
+            console.log('👆 Mouse move listener added');
+
+            return () => {
+                console.log('🧹 Cleaning up mouse listener');
+                document.removeEventListener('mousemove', handleMouseMove);
+            };
+
+        } catch (error) {
+            console.error('❌ Error in useEffect:', error);
+        }
+    }, []);
+
+    // Debug DOM elements after render
+    useEffect(() => {
+        console.log('🔍 DOM Debug - checking elements after render...');
+
+        setTimeout(() => {
+            const cards = document.querySelectorAll('.card');
+            const footer = document.querySelector('.footer');
+            const navbar = document.querySelector('.navbar');
+            const particles = document.querySelectorAll('.particle');
+
+            console.log('📊 DOM Elements Count:');
+            console.log('  Cards:', cards.length);
+            console.log('  Footer:', !!footer);
+            console.log('  Navbar:', !!navbar);
+            console.log('  Particles:', particles.length);
+
+            if (cards.length > 0) {
+                cards.forEach((card, index) => {
+                    console.log(`  Card ${index}:`, card.getBoundingClientRect());
+                });
+            }
+
+            // Force ScrollTrigger refresh
+            console.log('🔄 Refreshing ScrollTrigger...');
+            ScrollTrigger.refresh();
+
+        }, 1000); // Check after 1 second
+
+    }, []);
+
+    console.log('🎨 Rendering Hero component JSX');
+
     return (
         <>
             <main className='min-h-screen w-full'>
@@ -202,16 +317,16 @@ const Hero = () => {
                 </section>
 
 
-                <section className='w-full min-h-screen p-20 flex flex-col gap-7'>
+                <section className='w-full min-h-screen bg-gray-100 p-20 flex flex-col gap-7'>
                     <div className='text-center'>
                         <h1 className='text-orange-500 uppercase text-xl'>Feedbacks</h1>
                         <p className='text-6xl font-bold'>What our customers are saying</p>
                     </div>
-                    <div class="grid grid-rows-3 h-full grid-flow-col gap-4 px-4 py-4 leading-10">
-                        <div class="p-4 bg-[#f5f5f5] shadow-sm rounded-xl row-span-3 w-full ">
+                    <div className="grid grid-rows-3 h-full grid-flow-col gap-4 px-4 py-4 leading-10">
+                        <div className="p-4 bg-white border-1 shadow-sm rounded-xl row-span-3 w-full ">
                             <div className='flex flex-col gap-3'>
-                                <div class="flex gap-4 items-center">
-                                    <div class="flex h-12 w-12 items-center bg-gray-500 justify-center rounded-full">
+                                <div className="flex gap-4 items-center">
+                                    <div className="flex h-12 w-12 items-center bg-gray-500 justify-center rounded-full">
                                         <img src={profile} alt="User 1" />
                                     </div>
                                     <h1 className='
@@ -219,14 +334,14 @@ const Hero = () => {
                                 '>Gurniaz</h1>
                                 </div>
                                 <div>
-                                    <p class="text-gray-500 leading-7">"At first, I was a bit hesitant to use DeliverEase. I wasn't sure if it would be reliable or if the delivery would take forever. But I was pleasantly surprised.The entire process was smooth,from placing the order to receiving the item. The delivery was quick, and the dayscholar was very polite. I'm now a regular user and have recommended DeliverEase to all my friends."</p>
+                                    <p className="text-gray-500 leading-7">"At first, I was a bit hesitant to use DeliverEase. I wasn't sure if it would be reliable or if the delivery would take forever. But I was pleasantly surprised.The entire process was smooth,from placing the order to receiving the item. The delivery was quick, and the dayscholar was very polite. I'm now a regular user and have recommended DeliverEase to all my friends."</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="p-4 w-full bg-[#f5f5f5] shadow-sm rounded-xl col-span-2">
+                        <div className="p-4 w-full bg-white border-1 shadow-sm rounded-xl col-span-2">
                             <div className='flex flex-col gap-3'>
-                                <div class="flex gap-4 items-center">
-                                    <div class="flex h-12 w-12 items-center bg-gray-500 justify-center rounded-full">
+                                <div className="flex gap-4 items-center">
+                                    <div className="flex h-12 w-12 items-center bg-gray-500 justify-center rounded-full">
                                         <img src={profile} alt="User 2" />
                                     </div>
                                     <h1 className='
@@ -234,14 +349,14 @@ const Hero = () => {
                                 '>Sarthak Sharma</h1>
                                 </div>
                                 <div>
-                                    <p class="text-gray-500 leading-7">"DeliverEase has been a lifesaver for me.Being able to order items directly from the app has been incredibly convenient. The dayscholars are always friendly and efficient. I'd definitely recommend DeliverEase to any student living in a hostel."</p>
+                                    <p className="text-gray-500 leading-7">"DeliverEase has been a lifesaver for me.Being able to order items directly from the app has been incredibly convenient. The dayscholars are always friendly and efficient. I'd definitely recommend DeliverEase to any student living in a hostel."</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="p-4 w-full bg-[#f5f5f5] shadow-sm rounded-xl row-span-2 col-span-2">
+                        <div className="p-4 w-full bg-white border-1 shadow-sm rounded-xl row-span-2 col-span-2">
                             <div className='flex flex-col gap-3'>
-                                <div class="flex gap-4 items-center">
-                                    <div class="flex h-12 w-12 items-center bg-gray-500 justify-center rounded-full">
+                                <div className="flex gap-4 items-center">
+                                    <div className="flex h-12 w-12 items-center bg-gray-500 justify-center rounded-full">
                                         <img src={profile} alt="User 3" />
                                     </div>
                                     <h1 className='
@@ -249,14 +364,14 @@ const Hero = () => {
                                 '>Tanya Goyal</h1>
                                 </div>
                                 <div>
-                                    <p class="text-gray-500 leading-7">"I love the technology behind DeliverEase. The app is well-designed and user-friendly. The real-time tracking feature is especially helpful. I can see exactly where my order is and when it will arrive. The payment process is secure, and the overall experience is seamless. I'm impressed."</p>
+                                    <p className="text-gray-500 leading-7">"I love the technology behind DeliverEase. The app is well-designed and user-friendly. The real-time tracking feature is especially helpful. I can see exactly where my order is and when it will arrive. The payment process is secure, and the overall experience is seamless. I'm impressed."</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="p-4 w-full bg-[#f5f5f5] shadow-sm rounded-xl col-span-2 row-span-2">
+                        <div className="p-4 w-full  bg-white border-1 shadow-sm rounded-xl col-span-2 row-span-2">
                             <div className='flex flex-col gap-3'>
-                                <div class="flex gap-4 items-center">
-                                    <div class="flex h-12 w-12 items-center bg-gray-500 justify-center rounded-full">
+                                <div className="flex gap-4 items-center">
+                                    <div className="flex h-12 w-12 items-center bg-gray-500 justify-center rounded-full">
                                         <img src={profile} alt="User 4" />
                                     </div>
                                     <h1 className='
@@ -264,14 +379,14 @@ const Hero = () => {
                                 '>Shrishti Mahajan</h1>
                                 </div>
                                 <div>
-                                    <p class="text-gray-500 leading-7">"With my hectic schedule, I often don't have time to go shopping for groceries or other essentials. DeliverEase has been a game-changer. I can simply place an order from my phone and have everything delivered to my doorstep. It's so convenient and saves me a lot of time."</p>
+                                    <p className="text-gray-500 leading-7">"With my hectic schedule, I often don't have time to go shopping for groceries or other essentials. DeliverEase has been a game-changer. I can simply place an order from my phone and have everything delivered to my doorstep. It's so convenient and saves me a lot of time."</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="p-4 w-full bg-[#f5f5f5] shadow-sm rounded-xl row-span-1 col-span-2">
+                        <div className="p-4 w-full bg-white border-1 shadow-sm rounded-xl row-span-1 col-span-2">
                             <div className='flex flex-col gap-3'>
-                                <div class="flex gap-4 items-center">
-                                    <div class="flex h-12 w-12 items-center bg-gray-500 justify-center rounded-full">
+                                <div className="flex gap-4 items-center">
+                                    <div className="flex h-12 w-12 items-center bg-gray-500 justify-center rounded-full">
                                         <img src={profile} alt="User 5" />
                                     </div>
                                     <h1 className='
@@ -279,7 +394,7 @@ const Hero = () => {
                                 '>Harsh Duggal</h1>
                                 </div>
                                 <div>
-                                    <p class="text-gray-500 leading-7">"I really appreciate how DeliverEase helps connect hostellers and day scholars. It’s not just about deliveries—it’s also creating a sense of community. I’ve had seamless experiences so far, and the quick responses from day scholars have been impressive!"</p>
+                                    <p className="text-gray-500 leading-7">"I really appreciate how DeliverEase helps connect hostellers and day scholars. It's not just about deliveries—it's also creating a sense of community. I've had seamless experiences so far, and the quick responses from day scholars have been impressive!"</p>
                                 </div>
                             </div>
                         </div>

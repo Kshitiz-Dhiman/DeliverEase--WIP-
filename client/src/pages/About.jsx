@@ -17,7 +17,9 @@ const AboutUs = () => {
                 <div className="flex justify-between gap-10 items-center bg-[#f5f5f5] px-[150px] py-[70px]">
                     <div className='flex flex-col w-full gap-10'>
                         <div>
-                            <h1 className={'text-6xl font-bold'}>
+                            <h1 className='text-6xl font-bold
+                            '>
+                                {/* bg-gradient-to-r from-red-500 to-red-300 inline-block text-transparent bg-clip-text */}
                                 About DeliverEase
                             </h1>
                         </div>
